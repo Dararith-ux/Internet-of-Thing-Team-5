@@ -30,7 +30,7 @@ This project uses an ESP32 microcontroller to read temperature and humidity from
 | GND | GND |
 | IN | GPIO 15 |
 
-![Wiring Diagram](/Users/rith/Documents/Spring 2026/IoT/wiringdiagram.jpg)
+![Wiring Diagram](/wiringdiagram.jpg)
 
 ---
 
@@ -81,7 +81,7 @@ const char* password = "YOUR_WIFI_PASSWORD";
 ## 🔁 Program Flow / Block Diagram
 
 ### System Flowchart
-![System Flowchart](/Users/rith/Documents/Spring 2026/IoT/systemflowchart.png)
+![System Flowchart](/systemflowchart.png)
 
 ---
 
