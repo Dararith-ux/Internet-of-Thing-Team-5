@@ -92,7 +92,7 @@ PASSWORD = "YOUR_WIFI_PASSWORD"
 - Read DHT11 every 5 seconds and print the temperature and humidity with 2 decimals.
 - **Evidence:**
 
-<img src="./Temperature_Sensor_with_Relay/task1/task1.png" width="500"/>
+<img src="./Temperature_Sensor_with_Relay_Control/task1/task1.png" width="500"/>
 
 ---
 
@@ -101,8 +101,8 @@ PASSWORD = "YOUR_WIFI_PASSWORD"
 - Implement `send_message()` and post a test message to your group.
 - **Evidence:**
 
-<img src="./Temperature_Sensor_with_Relay/task2/outputinterminal.png" width="500"/>
-<img src="./Temperature_Sensor_with_Relay/task2/sendmessageintelegram.png" width="500"/>
+<img src="./Temperature_Sensor_with_Relay_Control/task2/outputinterminal.png" width="500"/>
+<img src="./Temperature_Sensor_with_Relay_Control/task2/sendmessageintelegram.png" width="500"/>
 
 ---
 
@@ -112,8 +112,8 @@ PASSWORD = "YOUR_WIFI_PASSWORD"
 - Implement `/on` and `/off` to control the relay.
 - **Evidence:**
 
-<img src="./Temperature_Sensor_with_Relay/task3/botcommand.png" width="500"/>
-<img src="./Temperature_Sensor_with_Relay/task3/terminaloutput.png" width="500"/>
+<img src="./Temperature_Sensor_with_Relay_Control/task3/botcommand.png" width="500"/>
+<img src="./Temperature_Sensor_with_Relay_Control/task3/terminaloutput.png" width="500"/>
 
 ---
 
