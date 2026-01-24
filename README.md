@@ -1,7 +1,7 @@
 
 # ESP32 Telegram-Controlled Relay with DHT22
 
-This project uses an ESP32 microcontroller to read temperature and humidity from a DHT22 sensor and control a relay module via Telegram commands.
+This project uses an ESP32 microcontroller to read temperature and humidity from a DHT11 sensor and control a relay module via Telegram commands.
 
 ---
 
@@ -9,28 +9,28 @@ This project uses an ESP32 microcontroller to read temperature and humidity from
 
 ### Components Used
 - ESP32 Dev Module (ESP32-WROOM-32)
-- DHT22 Temperature & Humidity Sensor
+- ESP32 Expansion Board
+- DHT11 Temperature & Humidity Sensor
 - 1-Channel 5V Relay Module
 - Jumper wires
-- (Optional) Breadboard
 
 ### Wiring Connections
 
-#### DHT22 → ESP32
-| DHT22 Pin | ESP32 Pin |
+#### DHT11 → ESP32
+| DHT11 Pin | ESP32 Pin |
 |----------|-----------|
-| VCC | VCC/3V3 |
-| DATA | GPIO 4 |
-| GND | GND |
+| VCC (+) | VCC/3V3 |
+| DATA (I/O) | GPIO 4 |
+| GND (-) | GND |
 
 #### Relay Module → ESP32
 | Relay Pin | ESP32 Pin |
 |----------|-----------|
 | VCC | VCC/5V (VIN) |
 | GND | GND |
-| IN | GPIO 15 |
+| IN | GPIO 2 |
 
-![Wiring Diagram](/wiringdiagram.jpg)
+![Wiring Diagram](/wiring.jpg)
 
 ---
 
@@ -49,7 +49,7 @@ Update the following values in the code:
 #define BOT_TOKEN "YOUR_BOT_TOKEN"
 #define CHAT_ID "YOUR_GROUP_CHAT_ID"
 #define DHTPIN 4
-#define RELAY_PIN 15
+#define RELAY_PIN 2
 ````
 
 ### 3. Wi-Fi Credentials
