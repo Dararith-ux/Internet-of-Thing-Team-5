@@ -14,7 +14,7 @@ CHAT_ID = "-5140435435"
 URL_SEND = "https://api.telegram.org/bot{}/sendMessage".format(BOT_TOKEN)
 
 # ---------- DHT11 ----------
-sensor = dht.DHT22(Pin(4))
+sensor = dht.DHT11(Pin(4))
 
 # ---------- WIFI CONNECT ----------
 wifi = network.WLAN(network.STA_IF)
