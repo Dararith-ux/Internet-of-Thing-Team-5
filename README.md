@@ -20,7 +20,7 @@ This project uses an ESP32 microcontroller to read temperature and humidity from
 | DHT11 Pin | ESP32 Pin |
 |----------|-----------|
 | VCC (+) | VCC/3V3 |
-| DATA (I/O) | GPIO 4 |
+| DATA (I/O) | GPIO 4 (D4) |
 | GND (-) | GND |
 
 #### Relay Module → ESP32
@@ -28,7 +28,7 @@ This project uses an ESP32 microcontroller to read temperature and humidity from
 |----------|-----------|
 | VCC | VCC/5V (VIN) |
 | GND | GND |
-| IN | GPIO 2 |
+| IN | GPIO 2 (D2)|
 
 ![Wiring Diagram](/wiring.png)
 
@@ -45,18 +45,18 @@ This project uses an ESP32 microcontroller to read temperature and humidity from
 ### 2. Code Configuration
 Update the following values in the code:
 
-```cpp
-#define BOT_TOKEN "YOUR_BOT_TOKEN"
-#define CHAT_ID "YOUR_GROUP_CHAT_ID"
-#define DHTPIN 4
-#define RELAY_PIN 2
-````
+```python
+BOT_TOKEN = "YOUR_BOT_TOKEN"
+CHAT_ID = "YOUR_CHAT_ID"
+DHTPIN = 4
+RELAY_PIN = 2
+```
 
 ### 3. Wi-Fi Credentials
 
-```cpp
-const char* ssid = "YOUR_WIFI_NAME";
-const char* password = "YOUR_WIFI_PASSWORD";
+```python
+SSID = "YOUR_WIFI_NAME"
+PASSWORD = "YOUR_WIFI_PASSWORD"
 ```
 
 ---
@@ -82,6 +82,47 @@ const char* password = "YOUR_WIFI_PASSWORD";
 
 ### System Flowchart
 ![System Flowchart](/systemflowchart.png)
+
+---
+
+## 📝 Task Requirements
+
+### Task 1 – Sensor Read & Print
+
+- Read DHT11 every 5 seconds and print the temperature and humidity with 2 decimals.
+- **Evidence:**
+
+<img src="./task1/task1.png" width="500"/>
+
+---
+
+### Task 2 – Telegram Send
+
+- Implement `send_message()` and post a test message to your group.
+- **Evidence:**
+
+<img src="./task2/outputinterminal.png" width="500"/>
+<img src="./task2/sendmessageintelegram.png" width="500"/>
+
+---
+
+### Task 3 – Bot Command
+
+- Implement `/status` to reply with current temperature, humidity, and relay state.
+- Implement `/on` and `/off` to control the relay.
+- **Evidence:**
+
+<img src="./task3/botcommand.png" width="500"/>
+<img src="./task3/terminaloutput.png" width="500"/>
+
+---
+
+### Task 4 – Bot Command
+
+- No messages while temperature < 30 °C.
+- If temperature ≥ 30 °C and relay is OFF, send an alert every loop (5 s) until `/on` is received.
+- After `/on`, stop alerts. When temperature < 30 °C, turn relay OFF automatically and send a one-time “auto-OFF” notice.
+- **Evidence:** [Task 4 Video](https://aupp-my.sharepoint.com/:v:/g/personal/2024321thy_aupp_edu_kh/IQAqkap3C7WEQ6NtTVoRbUaCAbjkEdITe1jTleTDORXA85I?nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJPbmVEcml2ZUZvckJ1c2luZXNzIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXciLCJyZWZlcnJhbFZpZXciOiJNeUZpbGVzTGlua0NvcHkifX0&e=rDtukK)
 
 ---
 
