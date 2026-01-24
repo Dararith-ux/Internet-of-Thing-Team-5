@@ -30,7 +30,7 @@ URL_UPDATES = API_BASE + "/getUpdates"
 # =======================
 # HARDWARE SETUP
 # =======================
-sensor = dht.DHT22(Pin(DHT_PIN))
+sensor = dht.DHT11(Pin(DHT_PIN))
 relay = Pin(RELAY_PIN, Pin.OUT)
 
 def relay_on():
@@ -49,7 +49,6 @@ relay_off()
 # HELPERS
 # =======================
 def url_encode(text: str) -> str:
-    # Percent-encode UTF-8 bytes (supports emojis and %)
     out = []
     for b in text.encode("utf-8"):
         if (48 <= b <= 57) or (65 <= b <= 90) or (97 <= b <= 122) or b in b"-_.~":
