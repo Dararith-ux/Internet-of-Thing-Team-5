@@ -12,11 +12,11 @@ SSID = "Robotic WIFI"
 PASSWORD = "rbtWIFI@2025"
 
 BOT_TOKEN = "8501835159:AAHJz2IJ6ZOZ3XOFRLz6VUHzNi4AZbX__wg"
-GROUP_CHAT_ID = "-5140435435"   # your Telegram group chat id (string)
+GROUP_CHAT_ID = "-5140435435"   # Telegram group chat id
 
 # Sensor & Relay Pins
 DHT_PIN = 4
-RELAY_PIN = 16                 # <-- CHANGE to your relay control pin (e.g., 2, 5, 12, 13, 14, 15, 16...)
+RELAY_PIN = 2
 RELAY_ACTIVE_HIGH = True       # True if relay ON = pin HIGH, False if relay ON = pin LOW
 
 POLL_INTERVAL_SEC = 2
@@ -28,7 +28,7 @@ URL_UPDATES = API_BASE + "/getUpdates"
 # =======================
 # HARDWARE SETUP
 # =======================
-sensor = dht.DHT22(Pin(DHT_PIN))
+sensor = dht.DHT11(Pin(DHT_PIN))
 relay = Pin(RELAY_PIN, Pin.OUT)
 
 def relay_on():
@@ -47,7 +47,6 @@ relay_off()
 # HELPERS
 # =======================
 def url_encode(text: str) -> str:
-    # Percent-encode UTF-8 bytes (supports emojis and %)
     out = []
     for b in text.encode("utf-8"):
         if (48 <= b <= 57) or (65 <= b <= 90) or (97 <= b <= 122) or b in b"-_.~":
