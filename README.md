@@ -30,7 +30,7 @@ This project uses an ESP32 microcontroller to read temperature and humidity from
 | GND | GND |
 | IN | GPIO 2 |
 
-![Wiring Diagram](/wiring.jpg)
+![Wiring Diagram](/wiring.png)
 
 ---
 
