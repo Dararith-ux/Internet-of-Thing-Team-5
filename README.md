@@ -1,6 +1,4 @@
----
 
-````md
 # ESP32 Telegram-Controlled Relay with DHT22
 
 This project uses an ESP32 microcontroller to read temperature and humidity from a DHT22 sensor and control a relay module via Telegram commands.
@@ -133,15 +131,3 @@ Is command received?
 
 ESP32 IoT Project – Telegram Bot Control
 
-```
-
----
-
-If you want, I can also:
-- Simplify this to **1-page max**
-- Rewrite it in **formal academic style**
-- Add a **Wokwi diagram link**
-- Adjust wording to match your **course rubric**
-
-Just tell me 👌
-```
