@@ -176,7 +176,7 @@ Upload the following libraries to your ESP32:
 ## Project Structure
 
 ```
-iot-lab2-group5/
+Lab2/
 ├── README.md
 ├── lcd_libraries/
 │   ├── lcd_api.py              # LCD API library
