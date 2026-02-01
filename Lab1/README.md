@@ -30,7 +30,7 @@ This project uses an ESP32 microcontroller to read temperature and humidity from
 | GND | GND |
 | IN | GPIO 2 (D2)|
 
-![Wiring Diagram](/wiring.png)
+![Wiring Diagram](wiring.png)
 
 ---
 
@@ -81,7 +81,7 @@ PASSWORD = "YOUR_WIFI_PASSWORD"
 ## 🔁 Program Flow / Block Diagram
 
 ### System Flowchart
-![System Flowchart](/systemflowchart.png)
+![System Flowchart](systemflowchart.png)
 
 ---
 
@@ -92,7 +92,7 @@ PASSWORD = "YOUR_WIFI_PASSWORD"
 - Read DHT11 every 5 seconds and print the temperature and humidity with 2 decimals.
 - **Evidence:**
 
-<img src="./Temperature_Sensor_with_Relay_Control/task1/task1.png" width="500"/>
+<img src="task1/task1.png" width="500"/>
 
 ---
 
@@ -101,8 +101,8 @@ PASSWORD = "YOUR_WIFI_PASSWORD"
 - Implement `send_message()` and post a test message to your group.
 - **Evidence:**
 
-<img src="./Temperature_Sensor_with_Relay_Control/task2/outputinterminal.png" width="500"/>
-<img src="./Temperature_Sensor_with_Relay_Control/task2/sendmessageintelegram.png" width="500"/>
+<img src="task2/outputinterminal.png" width="500"/>
+<img src="task2/sendmessageintelegram.png" width="500"/>
 
 ---
 
@@ -112,8 +112,8 @@ PASSWORD = "YOUR_WIFI_PASSWORD"
 - Implement `/on` and `/off` to control the relay.
 - **Evidence:**
 
-<img src="./Temperature_Sensor_with_Relay_Control/task3/botcommand.png" width="500"/>
-<img src="./Temperature_Sensor_with_Relay_Control/task3/terminaloutput.png" width="500"/>
+<img src="task3/botcommand.png" width="500"/>
+<img src="task3/terminaloutput.png" width="500"/>
 
 ---
 
