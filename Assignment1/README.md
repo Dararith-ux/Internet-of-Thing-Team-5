@@ -6,7 +6,7 @@
 **Photos:**
 <table>
   <tr>
-    <td><img src="photo-1.jpg" width="400"></td>
-    <td><img src="photo-2.jpg" width="400"></td>
+    <td><img src="photo1.jpg" width="400"></td>
+    <td><img src="photo2.jpg" width="400"></td>
   </tr>
 </table>
