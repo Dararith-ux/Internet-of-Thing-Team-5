@@ -74,7 +74,7 @@ All submitted work is original. Plagiarism or code sharing is strictly prohibite
 - Not Detected:
 ![IR Not Detected](task1/task1-not-detected.png)
 
-**Video Evidence:**: [Task 1 Demo Video](https://aupp-my.sharepoint.com/:v:/g/personal/2024321thy_aupp_edu_kh/IQABXYSsoFinQaGssVajp5MhAYgewLjD1mUyru3XSENyn3U?nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJPbmVEcml2ZUZvckJ1c2luZXNzIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXciLCJyZWZlcnJhbFZpZXciOiJNeUZpbGVzTGlua0NvcHkifX0&e=9qyo4X)
+**Video Evidence:** [Task 1 Demo Video](https://aupp-my.sharepoint.com/:v:/g/personal/2024321thy_aupp_edu_kh/IQABXYSsoFinQaGssVajp5MhAYgewLjD1mUyru3XSENyn3U?nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJPbmVEcml2ZUZvckJ1c2luZXNzIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXciLCJyZWZlcnJhbFZpZXciOiJNeUZpbGVzTGlua0NvcHkifX0&e=9qyo4X)
 
 ---
 
@@ -126,7 +126,7 @@ Servo Opened:
 
 ---
 
-## ✅ Task 4 – TM1637 Display Integration
+## Task 4 – TM1637 Display Integration
 
 **Objective:**
 - Count the number of IR detection events.
@@ -147,7 +147,7 @@ Servo Opened:
 
 ---
 
-## ✅ Task 5 – Manual Override Mode
+## Task 5 – Manual Override Mode
 
 **Objective:**
 - Add a Blynk switch to enable/disable automatic IR mode.
