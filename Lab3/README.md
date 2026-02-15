@@ -115,10 +115,12 @@ All submitted work is original. Plagiarism or code sharing is strictly prohibite
 **Photo Evidences:**
 
 Servo Closed:
-![Servo Closed](task3/task3-servo-closed.JPG)
+
+<img src="task3/task3-servo-closed.JPG" width="400">
 
 Servo Opened:
-![Servo Opened](task3/task3-servo-opened.JPG)
+
+<img src="task3/task3-servo-opened.JPG" width="400">
 
 **Video Evidence:** [Task 3 Demo Video](https://aupp-my.sharepoint.com/:v:/g/personal/2024321thy_aupp_edu_kh/IQDYGBHRuDmMRY2iLNpcOPLVAW7bseRArU2vis_u3l_mooU?nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJPbmVEcml2ZUZvckJ1c2luZXNzIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXciLCJyZWZlcnJhbFZpZXciOiJNeUZpbGVzTGlua0NvcHkifX0&e=XU9f0F)
 
