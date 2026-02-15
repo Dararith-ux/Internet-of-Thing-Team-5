@@ -5,8 +5,8 @@ import urequests as requests
 from tm1637 import TM1637
 
 # ---------- CONFIG ----------
-WIFI_SSID = "Soth"
-WIFI_PASS = "27082006"
+WIFI_SSID = "wifi"
+WIFI_PASS = "password"
 
 BLYNK_TOKEN = "qabTiF0fzERmr9lomjmpLyxeGjAbN-EY"
 BLYNK_API   = "https://blynk.cloud/external/api"
