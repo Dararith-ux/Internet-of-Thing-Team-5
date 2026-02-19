@@ -36,11 +36,11 @@ Students build hands-on systems combining hardware and software.
 
 ## 🛠 Technologies Used
 
-<p align="left">
-  <img src="https://cdn.simpleicons.org/python/3776AB" height="45"/>
-  <img src="https://cdn.simpleicons.org/espressif/E7352C" height="45"/>
-  <img src="https://cdn.simpleicons.org/thonny/2C3E50" height="45"/>
-</p>
+![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)
+![ESP32](https://img.shields.io/badge/ESP32-E7352C?style=for-the-badge&logo=espressif&logoColor=white)
+![MicroPython](https://img.shields.io/badge/MicroPython-2B2728?style=for-the-badge&logo=python&logoColor=white)
+![Thonny](https://img.shields.io/badge/Thonny-2C3E50?style=for-the-badge&logo=thonny&logoColor=white)
+
 
 - Python (MicroPython)
 - ESP32
