@@ -1,57 +1,59 @@
 # Introduction to Internet of Things (IoT)
 
-This repository contains lab exercises and projects completed for the Introduction to Internet of Things course.  
-The course focuses on building real-world IoT systems using microcontrollers, sensors, and Python-based programming.
+This repository contains lab exercises and projects completed for the Introduction to Internet of Things course.
+
+The course focuses on building practical IoT systems using ESP32, MicroPython, and various electronic components.
 
 ---
 
 ## 📚 Course Overview
 
-This course introduces fundamental IoT concepts including:
+Topics covered include:
 
-- Microcontroller programming
-- Sensor integration
-- Data acquisition and processing
-- Communication between devices
-- Basic IoT system design
+- ESP32 Microcontroller Programming
+- Sensor Integration
+- GPIO Control
+- Serial Communication
+- Basic IoT System Design
+- Real-world Embedded Applications
 
-Students build hands-on projects using ESP32 and various IoT components.
+Students build hands-on systems combining hardware and software.
 
 ---
 
-## 🔧 Hardware & Components Used
+## 🔧 Hardware & Components
 
 - ESP32 Microcontroller
-- DHT Sensors (Temperature & Humidity)
+- Temperature & Humidity Sensors (e.g., DHT)
 - LEDs
 - Push Buttons
-- Breadboard & Jumper Wires
 - Resistors
+- Breadboard & Jumper Wires
 - Relay Modules
-- Other IoT components as required
+- Other IoT components
 
 ---
 
 ## 🛠 Technologies Used
 
-<p>
-  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg" height="50"/>
-  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/arduino/arduino-original.svg" height="50"/>
-  <img src="https://upload.wikimedia.org/wikipedia/commons/6/6f/Espressif_ESP32_Logo.svg" height="50"/>
+<p align="left">
+  <img src="https://cdn.simpleicons.org/python/3776AB" height="45"/>
+  <img src="https://cdn.simpleicons.org/espressif/E7352C" height="45"/>
+  <img src="https://cdn.simpleicons.org/thonny/2C3E50" height="45"/>
 </p>
 
 - Python (MicroPython)
-- Thonny IDE
 - ESP32
-- IoT Sensors & Modules
+- Thonny IDE
 
 ---
 
 ## 🚀 Development Environment
 
-- Thonny IDE for writing and uploading MicroPython code
-- USB connection for flashing and debugging
-- Serial monitor for real-time output
+1. Connect ESP32 via USB.
+2. Open Thonny IDE.
+3. Select MicroPython (ESP32).
+4. Upload and run the Python script.
 
 ---
 
