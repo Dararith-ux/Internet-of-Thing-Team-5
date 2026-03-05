@@ -17,6 +17,12 @@ ESP32 (MicroPython)
 → InfluxDB (Time-Series Storage)  
 → Grafana (Dashboard Visualization)
 
+### Architecture Diagram
+![System Architecture Diagram](./wiring.png)
+
+### Hardware Wiring Setup
+![Hardware Wiring Photo](./wiring-pic.JPG)
+
 ---
 
 ## Sensors Used
