@@ -11,11 +11,10 @@ Processed data is sent to **Node-RED**, stored in **InfluxDB**, and visualized u
 
 ## System Architecture
 
-ESP32 (MicroPython)  
-→ Edge Processing (Filter + Classification + Timestamp)  
-→ Node-RED (Receive + Forward)  
-→ InfluxDB (Time-Series Storage)  
-→ Grafana (Dashboard Visualization)
+![ESP32](https://img.shields.io/badge/ESP32-MicroPython-blue?logo=espressif&logoColor=white)
+→ ![Node-RED](https://img.shields.io/badge/Node--RED-Flow%20Engine-red?logo=nodered&logoColor=white)
+→ ![InfluxDB](https://img.shields.io/badge/InfluxDB-Time%20Series%20DB-22ADF6?logo=influxdb&logoColor=white)
+→ ![Grafana](https://img.shields.io/badge/Grafana-Dashboard-F46800?logo=grafana&logoColor=white)
 
 ### Architecture Diagram
 ![System Architecture Diagram](./wiring.png)
@@ -126,7 +125,6 @@ Grafana visualizes the stored data with these required panels:
 5. **Altitude Graph (meters)**
 
 ---
-
 
 ## Academic Integrity
 All submitted work must be original. **Code sharing is strictly prohibited.**
