@@ -127,33 +127,6 @@ Grafana visualizes the stored data with these required panels:
 
 ---
 
-## Project Files
-\`\`\`
-project-folder/
-│
-├── main.py                 # MicroPython code (ESP32)
-├── flow.json               # Node-RED flow export
-├── README.md               # Documentation (this file)
-├── flowchart.png           # System flowchart (required)
-├── influxdb_data.png       # Screenshot of InfluxDB data
-├── grafana_dashboard.png   # Screenshot of Grafana dashboard
-└── demo_video.mp4          # 60–90 second demo video
-\`\`\`
-
----
-
-## Submission Checklist
-Required submissions for this lab:
-
-- [ ] `main.py` (MicroPython source code)
-- [ ] Flowchart (**important**)
-- [ ] Node-RED flow export file (`flow.json`)
-- [ ] Screenshot of InfluxDB data
-- [ ] Screenshot of Grafana dashboard
-- [ ] `README.md` explaining system logic
-- [ ] Demo video (60–90 seconds)
-
----
 
 ## Academic Integrity
 All submitted work must be original. **Code sharing is strictly prohibited.**
