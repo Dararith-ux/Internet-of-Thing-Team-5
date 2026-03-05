@@ -1,4 +1,4 @@
-# Multi-Sensor IoT Monitoring System with Grafana Dashboard
+# Lab 4 - Multi-Sensor IoT Monitoring System with Grafana Dashboard
 
 ## Overview
 This project implements a **multi-sensor IoT monitoring system** using **ESP32 with MicroPython (Thonny)**. The system collects environmental and health-related data from multiple sensors and performs **edge processing** before transmitting data to a cloud visualization pipeline.
