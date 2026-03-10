@@ -169,7 +169,4 @@ flowchart TD
     K --> L([End: Real-time monitoring system])
 ```
 
----
-
-## Academic Integrity
-All submitted work must be original. **Code sharing is strictly prohibited.**
+**Video Evidence:** [Lab 4 Demo Video](https://aupp-my.sharepoint.com/:v:/g/personal/2024321thy_aupp_edu_kh/IQAkGP6qsCN5Rrxrohkf0NKnAVZK2ojIIRZzvAOXpYPVR70?nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJTdHJlYW1XZWJBcHAiLCJyZWZlcnJhbFZpZXciOiJTaGFyZURpYWxvZy1MaW5rIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXcifX0%3D&e=HWePyI)
