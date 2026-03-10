@@ -8,7 +8,7 @@ from tm1637 import TM1637
 WIFI_SSID = "wifi"
 WIFI_PASS = "password"
 
-BLYNK_TOKEN = "qabTiF0fzERmr9lomjmpLyxeGjAbN-EY"
+BLYNK_TOKEN = "zW9Srjr0OmqEh8hAEhNjj9B8zAGUTBTk"
 BLYNK_API   = "https://blynk.cloud/external/api"
 
 IR_PIN = 12
