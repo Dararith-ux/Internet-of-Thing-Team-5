@@ -13,8 +13,8 @@ except Exception:
     urequests = None
 
 # ====== CONFIG ======
-WIFI_SSID = "Robotic WIFI"
-WIFI_PASS = "rbtWIFI@2025"
+WIFI_SSID = "water"
+WIFI_PASS = "shibalshibal"
 WEB_PORT  = 80        # port 80 = no port number needed in browser URL
 
 # ====== PINS ======
@@ -83,7 +83,7 @@ TM_UPDATE_MS       = 300
 DISTANCE_SAMPLE_MS = 60
 
 GATE_OPEN_ANGLE   = 90
-GATE_CLOSED_ANGLE = 35
+GATE_CLOSED_ANGLE = 0
 GATE_HOLD_OPEN_MS = 2500
 
 AUTO_MODE    = True
