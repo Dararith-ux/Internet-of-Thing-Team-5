@@ -18,9 +18,9 @@ WIFI_PASS = "shibalshibal"
 WEB_PORT  = 80        # port 80 = no port number needed in browser URL
 
 # ====== PINS ======
-IR1 = Pin(34, Pin.IN)
+IR1 = Pin(32, Pin.IN)
 IR2 = Pin(35, Pin.IN)
-IR3 = Pin(32, Pin.IN)
+IR3 = Pin(34, Pin.IN)
 
 TRIG = Pin(26, Pin.OUT)
 ECHO = Pin(25, Pin.IN)

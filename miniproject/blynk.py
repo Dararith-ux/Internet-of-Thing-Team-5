@@ -1,9 +1,8 @@
-# main.py - ESP32 Smart Parking
+# main_blynk.py - ESP32 Smart Parking (Blynk Integration, no web server)
 
 import network
-import socket
-import select
 import time
+import machine
 from machine import Pin, PWM, SoftI2C, time_pulse_us
 import dht
 
@@ -15,12 +14,22 @@ except Exception:
 # ====== CONFIG ======
 WIFI_SSID = "water"
 WIFI_PASS = "shibalshibal"
-WEB_PORT  = 80        # port 80 = no port number needed in browser URL
+
+BLYNK_TOKEN = "rOjP_UvomsfQXDVRRomv7VjEPQhFg6uQ"
+BLYNK_API   = "https://blynk.cloud/external/api"
+
+# ====== BLYNK VIRTUAL PINS ======
+# V0 - Servo control          (Slider: Integer 0-90) [only active in manual mode]
+# V1 - IR Sensor Slot 1       (Label/Value display: "Available" or "Occupied")
+# V2 - IR Sensor Slot 2       (Label/Value display: "Available" or "Occupied")
+# V3 - IR Sensor Slot 3       (Label/Value display: "Available" or "Occupied")
+# V4 - TM1637 / free count    (Value display: number of free slots)
+# V5 - Manual mode toggle     (Switch widget: 0=auto, 1=manual)
 
 # ====== PINS ======
-IR1 = Pin(34, Pin.IN)
+IR1 = Pin(32, Pin.IN)
 IR2 = Pin(35, Pin.IN)
-IR3 = Pin(32, Pin.IN)
+IR3 = Pin(34, Pin.IN)
 
 TRIG = Pin(26, Pin.OUT)
 ECHO = Pin(25, Pin.IN)
@@ -69,7 +78,6 @@ DETECTION_DISTANCE_CM    = 10
 COOLDOWN_MS              = 6000
 PRICE_PER_MINUTE_USD     = 1
 ENTRY_CONFIRM_TIMEOUT_MS = 12000
-EXIT_CONFIRM_TIMEOUT_MS  = 18000
 BUTTON_DEBOUNCE_MS       = 250
 FULL_NOTICE_COOLDOWN_MS  = 10000
 
@@ -82,15 +90,15 @@ DHT_UPDATE_MS      = 2000
 TM_UPDATE_MS       = 300
 DISTANCE_SAMPLE_MS = 60
 
-# How often to poll Telegram for new commands (ms)
-TELEGRAM_POLL_MS   = 3000
+# Blynk update intervals (ms) - keep reasonable to avoid flooding
+BLYNK_IR_UPDATE_MS    = 1000   # send IR slot status every 1s
+BLYNK_POLL_V0_MS      = 500    # poll V0 (servo command) every 500ms
+BLYNK_POLL_V5_MS      = 500    # poll V5 (manual mode) every 500ms
+BLYNK_FREE_UPDATE_MS  = 1000   # send free count every 1s
 
 GATE_OPEN_ANGLE   = 90
 GATE_CLOSED_ANGLE = 0
 GATE_HOLD_OPEN_MS = 2500
-
-AUTO_MODE    = True
-last_open_ms = 0
 
 # ====== STATE ======
 next_ticket_id = 1
@@ -115,9 +123,16 @@ last_exit_button_press_ms = 0
 pending_entry            = None
 telegram_warning_printed = False
 
-# Telegram command polling state
-last_telegram_poll_ms    = 0   # timestamp of last getUpdates call
-tg_last_update_id        = -1  # highest update_id already processed; prevents duplicates
+# Blynk state
+AUTO_MODE              = True           # True = auto, False = manual
+last_blynk_ir_ms       = 0
+last_blynk_poll_v0_ms  = 0
+last_blynk_poll_v5_ms  = 0
+last_blynk_free_ms     = 0
+last_ir_sent           = (None, None, None)   # track last sent values to avoid redundant sends
+last_free_sent         = None
+
+previous_slots_raw = None
 
 # ====== WIFI ======
 def connect_wifi(ssid, pwd):
@@ -168,137 +183,88 @@ def send_telegram(message):
     except Exception as e:
         print("Telegram error:", e)
 
-# Send a reply to a specific chat_id (used for command responses)
-def _send_telegram_to(chat_id, message):
-    if not TELEGRAM_BOT_TOKEN or urequests is None:
+# ====== BLYNK ======
+def blynk_set(vpin, value):
+    """Push a value to a Blynk virtual pin."""
+    if urequests is None:
         return
     try:
-        url = (
-            "https://api.telegram.org/bot{}/sendMessage?chat_id={}&text={}".format(
-                TELEGRAM_BOT_TOKEN,
-                _url_encode(str(chat_id)),
-                _url_encode(message)
-            )
-        )
-        resp = urequests.get(url)
-        resp.close()
+        url = BLYNK_API + "/update?token=" + BLYNK_TOKEN + "&V" + str(vpin) + "=" + str(value)
+        r = urequests.get(url)
+        r.close()
     except Exception as e:
-        print("Telegram reply error:", e)
+        print("Blynk set V" + str(vpin) + " error:", e)
 
-# ====== TELEGRAM COMMAND POLLING ======
-def _build_status_message():
-    """Build the /status reply string from current system state."""
-    slots_raw = get_raw_slots()
-    free, occ = count_from_raw(slots_raw)
-    slot_labels = []
+def blynk_get(vpin):
+    """Read a value from a Blynk virtual pin. Returns string or None on error."""
+    if urequests is None:
+        return None
+    try:
+        url = BLYNK_API + "/get?token=" + BLYNK_TOKEN + "&V" + str(vpin)
+        r = urequests.get(url)
+        raw = r.text
+        r.close()
+        # Blynk returns JSON array like ["1"] or ["0"]
+        val = raw.strip().strip("[]\"' ")
+        return val
+    except Exception as e:
+        print("Blynk get V" + str(vpin) + " error:", e)
+        return None
+
+def blynk_push_ir(slots_raw, free):
+    """Send IR sensor states as 'Available' or 'Occupied' to V1, V2, V3."""
+    global last_ir_sent
+    labels = []
     for i in range(TOTAL_SLOTS):
-        lbl = "Occupied" if slots_raw[i] == 0 else "Free"
-        tk = slot_tickets[i]
-        if tk is not None:
-            esec = max(time.ticks_diff(time.ticks_ms(), tk["start_ms"]), 0) // 1000
-            emin = max(esec // 60, 0)
-            efee = max(emin, 1) * PRICE_PER_MINUTE_USD
-            lbl += " (#" + str(tk["id"]) + " " + str(emin) + "m $" + str(efee) + ")"
-        slot_labels.append("  Slot " + str(i + 1) + ": " + lbl)
-    dist_str = "--" if last_distance is None else str(last_distance) + " cm"
-    mode_str = "AUTO" if AUTO_MODE else "MANUAL"
-    msg = (
-        "PARKING STATUS\n"
-        "Free : " + str(free) + "/" + str(TOTAL_SLOTS) + "\n"
-        "Occ  : " + str(occ) + "/" + str(TOTAL_SLOTS) + "\n"
-        + "\n".join(slot_labels) + "\n"
-        "Gate : " + gate_state.upper() + "\n"
-        "Mode : " + mode_str + "\n"
-        "Temp : " + last_temp + " C\n"
-        "Hum  : " + last_hum + " %\n"
-        "Dist : " + dist_str
-    )
-    return msg
+        labels.append("Available" if slots_raw[i] == 1 else "Occupied")
+    for i in range(TOTAL_SLOTS):
+        if labels[i] != last_ir_sent[i]:
+            blynk_set(i + 1, labels[i])   # V1, V2, V3
+    last_ir_sent = tuple(labels)
 
-def poll_telegram_commands():
-    """
-    Call getUpdates with offset = tg_last_update_id + 1 so only new messages
-    are returned. Process any recognised commands from TELEGRAM_CHAT_ID.
-    Keeps the request lightweight: timeout=1, limit=5.
-    """
-    global tg_last_update_id, AUTO_MODE
+def blynk_push_free(free):
+    """Send free slot count to V4 (TM1637 counter)."""
+    global last_free_sent
+    if free != last_free_sent:
+        blynk_set(4, free)
+        last_free_sent = free
 
-    if not TELEGRAM_BOT_TOKEN or urequests is None:
-        return
-
-    try:
-        offset = tg_last_update_id + 1
-        url = (
-            "https://api.telegram.org/bot{}/getUpdates"
-            "?timeout=1&limit=5&offset={}".format(TELEGRAM_BOT_TOKEN, offset)
-        )
-        resp = urequests.get(url)
-        data = resp.json()
-        resp.close()
-    except Exception as e:
-        print("Telegram poll error:", e)
-        return
-
-    if not data.get("ok"):
-        return
-
-    results = data.get("result", [])
-    for update in results:
-        uid = update.get("update_id", tg_last_update_id)
-        # Advance the offset regardless so we never re-process this update
-        if uid > tg_last_update_id:
-            tg_last_update_id = uid
-
-        # Only handle message updates
-        msg = update.get("message")
-        if not msg:
-            continue
-
-        # Only accept messages from the configured chat
-        chat_id = str(msg.get("chat", {}).get("id", ""))
-        if chat_id != str(TELEGRAM_CHAT_ID):
-            print("Ignoring message from unknown chat:", chat_id)
-            continue
-
-        text = msg.get("text", "").strip()
-        if not text:
-            continue
-
-        # Strip bot-username suffix if present (e.g. /status@MyBot)
-        if "@" in text:
-            text = text.split("@")[0]
-
-        print("Telegram command received:", text)
-        _handle_telegram_command(text, chat_id)
-
-def _handle_telegram_command(text, chat_id):
-    """Dispatch a recognised Telegram command and send a reply."""
+def blynk_poll_manual_mode():
     global AUTO_MODE
+    val = blynk_get(5)
+    if val is not None:
+        new_manual = (val.strip() == "1")
+        new_auto   = not new_manual
+        if new_auto != AUTO_MODE:
+            AUTO_MODE = new_auto
+            print("Mode changed:", "AUTO" if AUTO_MODE else "MANUAL")
+            # ── NEW: whenever mode switches, reset V0 slider to 0 ──
+            blynk_set(0, 0)
+            servo_write(GATE_CLOSED_ANGLE)
+            print("V0 reset to 0, gate closed on mode switch")
+    return AUTO_MODE
 
-    if text == "/status":
-        reply = _build_status_message()
-        _send_telegram_to(chat_id, reply)
-
-    elif text == "/open":
-        # Open gate immediately, ignoring cooldown (same as exit button behaviour)
-        now = time.ticks_ms()
-        slots_raw = get_raw_slots()
-        _, occ = count_from_raw(slots_raw)
-        opened = request_exit(now, slots_raw, occ, "telegram /open")
-        if opened:
-            _send_telegram_to(chat_id, "Gate opened via Telegram command.")
-        else:
-            _send_telegram_to(chat_id, "Gate open request sent (already open or error).")
-
-    elif text == "/close":
-        gate_close()
-        print("Gate closed by Telegram /close command")
-        _send_telegram_to(chat_id, "Gate closed via Telegram command.")
-
-    else:
-        # Unknown command - silently ignore to avoid noise
-        print("Unknown Telegram command ignored:", text)
-
+def blynk_poll_servo():
+    """
+    Read V0 (0-90) and move servo ONLY when in manual mode.
+    V0 datastream: Integer, MIN=0, MAX=90, units=Degrees.
+      V0 =  0  -> physical 0 deg   (fully closed)
+      V0 =  0  -> physical 0 deg   (GATE_CLOSED_ANGLE - fully closed)
+      V0 = 90  -> physical 90 deg  (GATE_OPEN_ANGLE - fully open)
+    Raw 1:1 mapping - slider value = exact servo angle.
+    In AUTO mode this is ignored - ultrasonic sensor controls the gate.
+    """
+    if AUTO_MODE:
+        return
+    val = blynk_get(0)
+    if val is not None:
+        try:
+            v0_val   = int(float(val.strip()))
+            physical = v0_to_physical_angle(v0_val)
+            servo_write(physical)
+            print("V0=" + str(v0_val) + " -> physical " + str(physical) + " deg (manual)")
+        except Exception as e:
+            print("V0 parse error:", e)
 # ====== BILLING ======
 def calculate_fee(start_ms, end_ms):
     elapsed_sec = max(time.ticks_diff(end_ms, start_ms), 0) // 1000
@@ -367,23 +333,18 @@ def process_pending_entry(now_ms, slots_raw, free):
         print("Entry timeout")
 
 # ====== EXIT FLOW ======
-# previous_slots tracks the last known IR state so we can detect occupancy -> free transitions
-previous_slots_raw = None
-
 def check_slot_exits(now_ms, slots_raw, free):
-    """Called every loop. If any slot changed from occupied(0) to free(1), bill it immediately."""
+    """Detect occupancy -> free transitions and bill accordingly."""
     global previous_slots_raw
     if previous_slots_raw is None:
         previous_slots_raw = slots_raw
         return
     for i in range(TOTAL_SLOTS):
         if previous_slots_raw[i] == 0 and slots_raw[i] == 1:
-            # Slot i just became free - car left
             bill_slot(i, now_ms, free)
     previous_slots_raw = slots_raw
 
 def request_exit(now_ms, slots_raw, occ, source):
-    """Gate open request from button, web, or Telegram - just opens the gate."""
     if not trigger_gate_open(ignore_cooldown=True):
         return False
     print("Exit gate opened by " + source)
@@ -403,6 +364,7 @@ def poll_exit_button(now_ms, slots_raw, occ):
 
 # ====== SERVO / GATE ======
 def servo_write(angle):
+    # Exact same formula as original working code - no direction reversal
     duty = int((min(max(angle, 0), 180) / 180) * 75) + 40
     try:
         servo.duty(duty)
@@ -411,6 +373,15 @@ def servo_write(angle):
             servo.duty_u16(int(duty * 65535 // 1023))
         except Exception as e:
             print("Servo error:", e)
+
+def v0_to_physical_angle(v0_val):
+    """
+    Direct 1:1 raw angle mapping.
+      V0 =  0  ->  0 deg   (GATE_CLOSED_ANGLE - fully closed)
+      V0 = 90  ->  90 deg  (GATE_OPEN_ANGLE - fully open)
+    What you set on the slider is exactly what the servo gets.
+    """
+    return min(max(int(v0_val), 0), 90)
 
 def gate_open():
     global gate_state, gate_open_until
@@ -422,6 +393,9 @@ def gate_close():
     global gate_state
     servo_write(GATE_CLOSED_ANGLE)
     gate_state = "closed"
+    # Sync Blynk V0 slider to 0 (= GATE_CLOSED_ANGLE) so slider matches real position
+    blynk_set(0, GATE_CLOSED_ANGLE)
+    print("Gate closed -> V0 reset to " + str(GATE_CLOSED_ANGLE))
 
 def trigger_gate_open(ignore_cooldown=False):
     global last_open_ms
@@ -433,7 +407,10 @@ def trigger_gate_open(ignore_cooldown=False):
         return True
     return False
 
+last_open_ms = 0
+
 def update_gate():
+    """Auto-close gate after GATE_HOLD_OPEN_MS. Only applies in auto mode or after manual open."""
     if gate_state == "open" and time.ticks_diff(time.ticks_ms(), gate_open_until) >= 0:
         gate_close()
         print("Gate closed")
@@ -520,114 +497,6 @@ def update_display(free, occ, dist):
         "T:" + last_temp + " H:" + last_hum + " D:" + dist_text
     )
 
-# ====== WEB PAGE ======
-# CSS kept as bytes - never goes through .format() so curly braces are safe
-_CSS = b"""<style>
-body{background:#222;color:#fff;font-family:sans-serif;text-align:center;margin:0}
-.w{background:#333;padding:14px;max-width:360px;margin:16px auto;border-radius:8px}
-h2{margin:6px 0}
-.r{display:flex;gap:6px;margin:10px 0}
-.s{flex:1;padding:10px 4px;border-radius:6px;font-weight:bold;font-size:13px}
-.f{background:#2e7d32;color:#fff}
-.o{background:#c62828;color:#fff}
-p{font-size:13px;margin:3px 0}
-.ga{color:#69f0ae}.gm{color:#ff5252}
-button{width:120px;height:36px;font-size:12px;margin:3px;border:none;border-radius:5px;background:#1565c0;color:#fff;cursor:pointer}
-</style>"""
-
-def handle_client(client, free, occ, dist, slots, slots_raw):
-    global AUTO_MODE
-    try:
-        client.settimeout(5.0)
-
-        req = b""
-        try:
-            req = client.recv(512)
-        except Exception:
-            pass
-
-        if not req:
-            return
-
-        # Parse path
-        path = "/"
-        try:
-            first_line = req.split(b"\r\n")[0]
-            parts = first_line.split(b" ")
-            if len(parts) >= 2:
-                path = parts[1].decode("utf-8")
-        except Exception:
-            pass
-
-        print("Request:", path)
-
-        # Actions
-        now = time.ticks_ms()
-        if   "/open"   in path: request_exit(now, slots_raw, occ, "web")
-        elif "/close"  in path: gate_close()
-        elif "/auto"   in path: AUTO_MODE = True
-        elif "/manual" in path: AUTO_MODE = False
-
-        # Build page
-        mode_str = "AUTO" if AUTO_MODE else "MANUAL"
-        dstr = "--" if dist is None else str(dist)
-        mc   = "ga" if mode_str == "AUTO" else "gm"
-        ref  = '<meta http-equiv="refresh" content="3">' if mode_str == "AUTO" else ""
-
-        cards = ""
-        for i in range(3):
-            occ_slot = slots[i] == "occupied"
-            cl  = "o" if occ_slot else "f"
-            lbl = "Occupied" if occ_slot else "Free"
-            tk  = slot_tickets[i]
-            extra = ""
-            if tk is not None:
-                esec  = max(time.ticks_diff(time.ticks_ms(), tk["start_ms"]), 0) // 1000
-                emin  = max(esec // 60, 0)
-                efee  = max(emin, 1) * PRICE_PER_MINUTE_USD
-                extra = "<br><small>#" + str(tk["id"]) + " " + str(emin) + "m $" + str(efee) + "</small>"
-            cards += '<div class="s ' + cl + '">Slot ' + str(i+1) + '<br>' + lbl + extra + '</div>'
-
-        html = (
-            '<!DOCTYPE html><html><head>'
-            '<meta name="viewport" content="width=device-width,initial-scale=1">'
-            '<title>Parking</title>' + ref +
-            '</head><body><div class="w">'
-            '<h2>Smart Parking</h2>'
-            '<div class="r">' + cards + '</div>'
-            '<p>Free: <b>' + str(free) + '</b> | Occ: <b>' + str(occ) + '</b></p>'
-            '<p>Dist: <b>' + dstr + '</b>cm | Gate: <b>' + gate_state.upper() + '</b></p>'
-            '<p>Mode: <span class="' + mc + '">' + mode_str + '</span></p>'
-            '<a href="/open"><button>Open Exit Gate</button></a>'
-            '<a href="/close"><button>Close Gate</button></a><br>'
-            '<a href="/auto"><button>Auto Mode</button></a>'
-            '<a href="/manual"><button>Manual Mode</button></a>'
-            '</div></body></html>'
-        ).encode("utf-8")
-
-        # Send response in chunks: header, CSS bytes, body
-        client.sendall(b"HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nConnection: close\r\n\r\n")
-        client.sendall(_CSS)
-        client.sendall(html)
-
-    except Exception as e:
-        print("Client error:", e)
-    finally:
-        try:
-            client.close()
-        except Exception:
-            pass
-
-# ====== START SERVER ======
-def start_server(port):
-    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    s.bind(("", port))
-    s.listen(3)
-    s.setblocking(False)   # KEY FIX: non-blocking so main loop never stalls
-    print("Server listening on port", port)
-    return s
-
 # ====== STARTUP ======
 print("=== STARTUP BEGIN ===")
 
@@ -638,48 +507,48 @@ if not ip:
 else:
     print("[1] OK:", ip)
 
-print("[2] Web server...")
-server = None
-if ip:
-    try:
-        server = start_server(WEB_PORT)
-        print("[2] OK: http://" + ip + ":" + str(WEB_PORT))
-    except Exception as e:
-        print("[2] FAIL:", e)
-        server = None
-else:
-    print("[2] SKIP: no IP")
-
-print("[3] Gate close...")
+print("[2] Gate close...")
 try:
     gate_close()
-    print("[3] OK")
+    print("[2] OK")
 except Exception as e:
-    print("[3] FAIL:", e)
+    print("[2] FAIL:", e)
 
-print("[4] LCD clear...")
+print("[3] LCD clear...")
 if lcd:
     try:
         lcd.clear()
-        print("[4] OK")
+        print("[3] OK")
     except Exception as e:
-        print("[4] FAIL:", e)
+        print("[3] FAIL:", e)
 else:
-    print("[4] SKIP: no LCD")
+    print("[3] SKIP: no LCD")
 
-print("[5] Boot slot states...")
+print("[4] Boot slot states...")
 try:
     _boot_raw = get_raw_slots()
     _boot_free, _boot_occ = count_from_raw(_boot_raw)
     _boot_ms = time.ticks_ms()
-    print("[5] OK: raw=" + str(_boot_raw) + " occ=" + str(_boot_occ))
+    print("[4] OK: raw=" + str(_boot_raw) + " occ=" + str(_boot_occ))
     for _i in range(TOTAL_SLOTS):
         if _boot_raw[_i] == 0:
             slot_tickets[_i] = {"id": next_ticket_id, "start_ms": _boot_ms}
             next_ticket_id += 1
 except Exception as e:
-    print("[5] FAIL:", e)
+    print("[4] FAIL:", e)
     _boot_occ = 0
+
+print("[5] Initial Blynk push...")
+try:
+    _boot_raw = get_raw_slots()
+    _boot_free, _boot_occ = count_from_raw(_boot_raw)
+    blynk_push_ir(_boot_raw, _boot_free)
+    blynk_push_free(_boot_free)
+    blynk_set(5, 0)                    # V5: start in AUTO mode
+    blynk_set(0, GATE_CLOSED_ANGLE)    # V0: set slider to 0 (closed position) on boot
+    print("[5] OK")
+except Exception as e:
+    print("[5] FAIL:", e)
 
 print("[6] Telegram...")
 try:
@@ -696,19 +565,19 @@ print("=== SYSTEM READY ===")
 while True:
     now = time.ticks_ms()
 
-    # 1) Read IR
+    # 1) Read IR sensors
     slots_raw = get_raw_slots()
     slots     = slots_from_raw(slots_raw)
     free, occ = count_from_raw(slots_raw)
 
-    # 2) Exit button
+    # 2) Exit button (physical)
     poll_exit_button(now, slots_raw, occ)
 
-    # 3) Pending entry / direct exit detection
+    # 3) Entry / exit detection
     process_pending_entry(now, slots_raw, free)
     check_slot_exits(now, slots_raw, free)
 
-    # 4) Ultrasonic
+    # 4) Ultrasonic - only triggers auto gate in AUTO mode
     if time.ticks_diff(now, last_distance_ms) >= DISTANCE_SAMPLE_MS:
         last_distance    = get_stable_distance()
         last_distance_ms = now
@@ -721,18 +590,19 @@ while True:
             elif AUTO_MODE and gate_state == "closed":
                 request_entry(now, occ, free, last_distance)
             else:
+                # Manual mode - notify only, gate not opened automatically
                 send_telegram("[>] Car at entrance. Spots left: " + str(free) + " (manual)")
         entry_presence = near
 
-    # 5) Gate auto-close
+    # 5) Gate auto-close timer
     update_gate()
 
-    # 6) DHT
+    # 6) DHT sensor
     if time.ticks_diff(now, last_dht_ms) >= DHT_UPDATE_MS:
         update_dht()
         last_dht_ms = now
 
-    # 7) TM1637
+    # 7) TM1637 physical display
     if time.ticks_diff(now, last_tm_ms) >= TM_UPDATE_MS:
         update_tm(free)
         last_tm_ms = now
@@ -742,20 +612,28 @@ while True:
         update_display(free, occ, last_distance)
         last_display_ms = now
 
-    # 9) Web
-    if server:
-        try:
-            r, _, _ = select.select([server], [], [], 0)
-            if r:
-                client, caddr = server.accept()
-                print("Web connection from", caddr)
-                handle_client(client, free, occ, last_distance, slots, slots_raw)
-        except Exception as e:
-            print("Server loop error:", e)
+    # 9) Blynk: Poll V5 (manual mode toggle)
+    #    Done before V0 so mode is current when we check servo command
+    if time.ticks_diff(now, last_blynk_poll_v5_ms) >= BLYNK_POLL_V5_MS:
+        blynk_poll_manual_mode()
+        last_blynk_poll_v5_ms = now
 
-    # 10) Telegram command polling
-    if time.ticks_diff(now, last_telegram_poll_ms) >= TELEGRAM_POLL_MS:
-        poll_telegram_commands()
-        last_telegram_poll_ms = now
+    # 10) Blynk: Poll V0 (servo control) - only acts in MANUAL mode
+    #     In AUTO mode this poll is skipped entirely to save bandwidth
+    if not AUTO_MODE:
+        if time.ticks_diff(now, last_blynk_poll_v0_ms) >= BLYNK_POLL_V0_MS:
+            blynk_poll_servo()
+            last_blynk_poll_v0_ms = now
+
+    # 11) Blynk: Push IR slot states (V1, V2, V3) as "Available"/"Occupied"
+    if time.ticks_diff(now, last_blynk_ir_ms) >= BLYNK_IR_UPDATE_MS:
+        blynk_push_ir(slots_raw, free)
+        last_blynk_ir_ms = now
+
+    # 12) Blynk: Push free slot count (V4)
+    if time.ticks_diff(now, last_blynk_free_ms) >= BLYNK_FREE_UPDATE_MS:
+        blynk_push_free(free)
+        last_blynk_free_ms = now
 
     time.sleep_ms(LOOP_DELAY_MS)
+
