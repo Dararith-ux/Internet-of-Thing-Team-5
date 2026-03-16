@@ -296,8 +296,8 @@ def trigger_gate_open(ignore_cooldown=False):
     return False
 
 def update_gate():
-    # In MANUAL mode the gate stays open until explicitly closed via web or button.
-    # In AUTO mode the gate auto-closes after GATE_HOLD_OPEN_MS.
+    # In manual mode the gate stays open until /close is sent explicitly.
+    # The auto-close timer only applies in AUTO mode.
     if AUTO_MODE and gate_state == "open" and time.ticks_diff(time.ticks_ms(), gate_open_until) >= 0:
         gate_close()
         print("Gate closed")
@@ -431,6 +431,47 @@ def handle_client(client, free, occ, dist, slots, slots_raw):
         elif "/close"  in path: gate_close()
         elif "/auto"   in path: AUTO_MODE = True
         elif "/manual" in path: AUTO_MODE = False
+
+        # [NEW] /api/status — tiny JSON blob for bot.py (no TLS, plain HTTP only)
+        if "/api/status" in path:
+            slot_parts = []
+            for i in range(3):
+                tk = slot_tickets[i]
+                occupied = (slots_raw[i] == 0)
+                if occupied and tk is not None:
+                    esec = max(time.ticks_diff(time.ticks_ms(), tk["start_ms"]), 0) // 1000
+                    emin = max(esec // 60, 0)
+                    efee = max(emin, 1) * PRICE_PER_MINUTE_USD
+                    slot_parts.append(
+                        '{"slot":' + str(i+1) +
+                        ',"state":"occupied"' +
+                        ',"ticket":' + str(tk["id"]) +
+                        ',"min":' + str(emin) +
+                        ',"fee":' + str(efee) + '}'
+                    )
+                elif occupied:
+                    slot_parts.append(
+                        '{"slot":' + str(i+1) + ',"state":"occupied","ticket":null,"min":0,"fee":0}'
+                    )
+                else:
+                    slot_parts.append(
+                        '{"slot":' + str(i+1) + ',"state":"free","ticket":null,"min":0,"fee":0}'
+                    )
+            dist_val = "null" if last_distance is None else str(last_distance)
+            json_body = (
+                '{"free":' + str(free) +
+                ',"occupied":' + str(occ) +
+                ',"total":' + str(TOTAL_SLOTS) +
+                ',"gate":"' + gate_state + '"' +
+                ',"mode":"' + ("auto" if AUTO_MODE else "manual") + '"' +
+                ',"temp":"' + last_temp + '"' +
+                ',"hum":"' + last_hum + '"' +
+                ',"dist":' + dist_val +
+                ',"slots":[' + ",".join(slot_parts) + ']}'
+            ).encode("utf-8")
+            client.sendall(b"HTTP/1.1 200 OK\r\nContent-Type: application/json\r\nConnection: close\r\n\r\n")
+            client.sendall(json_body)
+            return   # skip HTML page
 
         # Build page
         mode_str = "AUTO" if AUTO_MODE else "MANUAL"
@@ -618,3 +659,4 @@ while True:
             print("Server loop error:", e)
 
     time.sleep_ms(LOOP_DELAY_MS)
+

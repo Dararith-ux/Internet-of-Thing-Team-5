@@ -12,8 +12,8 @@ except Exception:
     urequests = None
 
 # ====== CONFIG ======
-WIFI_SSID = "water"
-WIFI_PASS = "shibalshibal"
+WIFI_SSID = "Robotic WIFI"
+WIFI_PASS = "rbtWIFI@2025"
 
 BLYNK_TOKEN = "rOjP_UvomsfQXDVRRomv7VjEPQhFg6uQ"
 BLYNK_API   = "https://blynk.cloud/external/api"
@@ -25,6 +25,7 @@ BLYNK_API   = "https://blynk.cloud/external/api"
 # V3 - IR Sensor Slot 3       (Label/Value display: "Available" or "Occupied")
 # V4 - TM1637 / free count    (Value display: number of free slots)
 # V5 - Manual mode toggle     (Switch widget: 0=auto, 1=manual)
+# V6 - Temperature            (Value display: °C from DHT11)
 
 # ====== PINS ======
 IR1 = Pin(32, Pin.IN)
@@ -95,6 +96,7 @@ BLYNK_IR_UPDATE_MS    = 1000   # send IR slot status every 1s
 BLYNK_POLL_V0_MS      = 500    # poll V0 (servo command) every 500ms
 BLYNK_POLL_V5_MS      = 500    # poll V5 (manual mode) every 500ms
 BLYNK_FREE_UPDATE_MS  = 1000   # send free count every 1s
+BLYNK_TEMP_UPDATE_MS  = 2000   # send temperature every 2s (matches DHT read interval)
 
 GATE_OPEN_ANGLE   = 90
 GATE_CLOSED_ANGLE = 0
@@ -129,8 +131,10 @@ last_blynk_ir_ms       = 0
 last_blynk_poll_v0_ms  = 0
 last_blynk_poll_v5_ms  = 0
 last_blynk_free_ms     = 0
+last_blynk_temp_ms     = 0
 last_ir_sent           = (None, None, None)   # track last sent values to avoid redundant sends
 last_free_sent         = None
+last_temp_sent         = None
 
 previous_slots_raw = None
 
@@ -229,6 +233,15 @@ def blynk_push_free(free):
         blynk_set(4, free)
         last_free_sent = free
 
+def blynk_push_temp(temp_str):
+    """Send temperature to V6. Skips '--' (sensor not ready) and unchanged values."""
+    global last_temp_sent
+    if temp_str == "--":
+        return
+    if temp_str != last_temp_sent:
+        blynk_set(6, temp_str)
+        last_temp_sent = temp_str
+
 def blynk_poll_manual_mode():
     global AUTO_MODE
     val = blynk_get(5)
@@ -248,7 +261,6 @@ def blynk_poll_servo():
     """
     Read V0 (0-90) and move servo ONLY when in manual mode.
     V0 datastream: Integer, MIN=0, MAX=90, units=Degrees.
-      V0 =  0  -> physical 0 deg   (fully closed)
       V0 =  0  -> physical 0 deg   (GATE_CLOSED_ANGLE - fully closed)
       V0 = 90  -> physical 90 deg  (GATE_OPEN_ANGLE - fully open)
     Raw 1:1 mapping - slider value = exact servo angle.
@@ -265,6 +277,7 @@ def blynk_poll_servo():
             print("V0=" + str(v0_val) + " -> physical " + str(physical) + " deg (manual)")
         except Exception as e:
             print("V0 parse error:", e)
+
 # ====== BILLING ======
 def calculate_fee(start_ms, end_ms):
     elapsed_sec = max(time.ticks_diff(end_ms, start_ms), 0) // 1000
@@ -546,6 +559,7 @@ try:
     blynk_push_free(_boot_free)
     blynk_set(5, 0)                    # V5: start in AUTO mode
     blynk_set(0, GATE_CLOSED_ANGLE)    # V0: set slider to 0 (closed position) on boot
+    # Note: V6 temperature not pushed at boot since DHT hasn't been read yet
     print("[5] OK")
 except Exception as e:
     print("[5] FAIL:", e)
@@ -635,5 +649,9 @@ while True:
         blynk_push_free(free)
         last_blynk_free_ms = now
 
-    time.sleep_ms(LOOP_DELAY_MS)
+    # 13) Blynk: Push temperature (V6)
+    if time.ticks_diff(now, last_blynk_temp_ms) >= BLYNK_TEMP_UPDATE_MS:
+        blynk_push_temp(last_temp)
+        last_blynk_temp_ms = now
 
+    time.sleep_ms(LOOP_DELAY_MS)
