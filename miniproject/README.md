@@ -28,7 +28,6 @@ The system integrates sensors, actuators, and multiple IoT platforms to provide 
 | IR Sensors (x3+) | Detect parking slot occupancy |
 | Servo Motor | Gate barrier control |
 | DHT11 | Temperature & humidity sensor |
-| Relay Module | Control parking lights |
 | TM1637 Display | Display available slots |
 | LCD I2C | Show system status |
 
