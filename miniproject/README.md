@@ -329,8 +329,12 @@ When the mode switches (V5), the system automatically resets V0 to 0 and closes 
 
 ## 🎥 Video Presentation
 
-👉 Watch the full project demo here:  
-[▶️ Watch on YouTube](https://youtu.be/NjHtIlr9m5Y)
+
+👉 Watch the full project presentation here:  
+[▶️ Watch on YouTube](https://youtu.be/vVy635YO24E)
+
+👉 Watch the full project presentation video here:  
+[⬇️ Download the video](https://drive.google.com/file/d/1Phi_EB0AmVxZ-GtgQCCJyCwK6PIw2k2m/view?usp=sharing)
 
 ---
 
