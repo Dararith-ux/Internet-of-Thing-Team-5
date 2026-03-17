@@ -34,7 +34,7 @@ The system integrates sensors, actuators, and multiple IoT platforms to provide 
 
 ### 📷 Hardware Setup Evidence
 <!-- Insert hardware images here -->
-![Hardware Setup](images/hardware_setup.jpg)
+![Hardware Setup](images/parking_setup.jpg)
 
 ---
 
@@ -85,9 +85,9 @@ The system integrates sensors, actuators, and multiple IoT platforms to provide 
 | `telegram.py` | Telegram command handler (run in Thonny) |
 | `telegram_bot.py` | Telegram bot backend |
 
-### 📷 Code Screenshots
+<!-- ### 📷 Code Screenshots -->
 <!-- Insert code screenshots -->
-![Code](images/code.png)
+<!-- ![Code](images/code.png) -->
 
 ---
 
@@ -145,7 +145,7 @@ The system integrates sensors, actuators, and multiple IoT platforms to provide 
    - Web dashboard  
    - Telegram bot  
    - Blynk app  
-6. Lights controlled via relay (auto/manual)  
+6. Lights controlled (auto/manual)  
 
 ---
 
@@ -158,7 +158,7 @@ The system integrates sensors, actuators, and multiple IoT platforms to provide 
 
 ---
 
-## ⚠️ Challenges Faced
+<!-- ## ⚠️ Challenges Faced
 - Synchronizing multiple IoT platforms  
 - Handling real-time updates  
 - Debugging MicroPython limitations  
@@ -174,7 +174,7 @@ The system integrates sensors, actuators, and multiple IoT platforms to provide 
 - Improve UI/UX design  
 - Cloud database integration  
 
----
+--- -->
 
 ## 🎥 Video Presentation
 
