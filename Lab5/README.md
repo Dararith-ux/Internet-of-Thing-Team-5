@@ -20,6 +20,14 @@ This lab demonstrates a practical IoT pattern: **sense -> classify -> respond**.
 
 ---
 
+## Demo Videos
+
+- [Task 2 Demo - Basic Color Classification](https://youtu.be/MnauJ5T9L4k)
+- [Task 3 Demo - NeoPixel Visual Feedback](https://youtu.be/VtQrTx3tlNY)
+- [Task 4 Demo - Motor Speed Control](https://youtu.be/raTd_V2fLhA)
+
+---
+
 ## System Flow
 
 ```mermaid
