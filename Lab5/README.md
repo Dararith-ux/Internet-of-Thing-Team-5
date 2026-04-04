@@ -121,6 +121,12 @@ This is a lightweight and readable rule-based classifier. It works well for clea
 - Classifies the dominant color
 - Prints both the raw readings and the detected label
 
+### Demo
+
+The demo below shows Task 2 classifying the dominant detected color in real time while different colors are presented to the sensor.
+
+[Watch Task 2 Demo](https://youtu.be/MnauJ5T9L4k)
+
 ---
 
 ### Task 3 - NeoPixel Visual Feedback
@@ -137,6 +143,12 @@ Task 3 turns the classification result into immediate visual feedback. A 24-pixe
 - `UNKNOWN` -> LEDs turn off
 
 This task makes the system far more interactive because the sensor result is no longer visible only in the serial monitor; it now appears directly in the physical system.
+
+### Demo
+
+The demo below shows Task 3 updating the NeoPixel ring color based on the detected object color.
+
+[Watch Task 3 Demo](https://youtu.be/VtQrTx3tlNY)
 
 ---
 
@@ -162,6 +174,12 @@ Task 4 extends the same detection logic to a physical actuator. A DC motor is co
 - Simple embedded decision-making from real-world input
 
 This is the most complete implementation in the lab because it closes the loop from sensing to decision to physical action.
+
+### Demo
+
+The demo below shows Task 4 using the detected color to control DC motor speed in real time.
+
+[Watch Task 4 Demo](https://youtu.be/raTd_V2fLhA)
 
 ---
 
