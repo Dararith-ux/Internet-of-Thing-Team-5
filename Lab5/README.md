@@ -191,16 +191,11 @@ The demo below shows Task 4 using the detected color to control DC motor speed i
 
 ---
 
-### Task 5 - Reserved Folder
+### Task 5 - Pending Development
 
-`Task5/` currently exists as an empty placeholder and does not yet contain implementation files.
+`Task5/` is currently pending and still under development.
 
-It can be used later for an extension such as:
-
-- calibrated color thresholds
-- object sorting logic
-- buzzer or display feedback
-- cloud logging of detected colors
+We plan to complete Task 5 by Sunday, April 5, 2026. Unfortunately, the required components and microcontroller are still in the lab and the campus is closed, so we are unable to continue full development and integration with the MIT App Inventor application as instructed for Task 5.
 
 ---
 
