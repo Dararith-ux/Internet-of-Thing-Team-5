@@ -204,7 +204,7 @@ This task extends the color-sensing workflow into a mobile UI experience using M
 
 ### Task 5 Screen UI
 
-![Task 5 Screen UI](./Task5/screen-ui.png)
+![Task 5 Screen UI](./Task5/screen.png)
 
 ### Demo
 
