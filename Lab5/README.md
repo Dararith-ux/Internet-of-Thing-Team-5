@@ -25,6 +25,7 @@ This lab demonstrates a practical IoT pattern: **sense -> classify -> respond**.
 - [Task 2 Demo - Basic Color Classification](https://youtu.be/MnauJ5T9L4k)
 - [Task 3 Demo - NeoPixel Visual Feedback](https://youtu.be/VtQrTx3tlNY)
 - [Task 4 Demo - Motor Speed Control](https://youtu.be/raTd_V2fLhA)
+- [Task 5 Demo - MIT App Inventor Control Interface](https://aupp-my.sharepoint.com/:v:/g/personal/2024321thy_aupp_edu_kh/IQCp0btNERFtRqF_0KmCBVfTAUO6oa-rSHYdJl1dI2tAv90?nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJPbmVEcml2ZUZvckJ1c2luZXNzIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXciLCJyZWZlcnJhbFZpZXciOiJNeUZpbGVzTGlua0NvcHkifX0&e=lv8gzY)
 
 ---
 
@@ -191,11 +192,23 @@ The demo below shows Task 4 using the detected color to control DC motor speed i
 
 ---
 
-### Task 5 - Pending Development
+### Task 5 - MIT App Inventor Integration
 
-`Task5/` is currently pending and still under development.
+`Task5/` has been completed.
 
-We plan to complete Task 5 by Sunday, April 5, 2026. Unfortunately, the required components and microcontroller are still in the lab and the campus is closed, so we are unable to continue full development and integration with the MIT App Inventor application as instructed for Task 5.
+This task extends the color-sensing workflow into a mobile UI experience using MIT App Inventor. The app displays the detected color and provides a simple interactive interface for monitoring the system.
+
+### Task 5 Block Diagram
+
+![Task 5 Block Diagram](./Task5/block.png)
+
+### Task 5 Screen UI
+
+![Task 5 Screen UI](./Task5/screen-ui.png)
+
+### Demo
+
+[Watch Task 5 Demo](https://aupp-my.sharepoint.com/:v:/g/personal/2024321thy_aupp_edu_kh/IQCp0btNERFtRqF_0KmCBVfTAUO6oa-rSHYdJl1dI2tAv90?nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJPbmVEcml2ZUZvckJ1c2luZXNzIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXciLCJyZWZlcnJhbFZpZXciOiJNeUZpbGVzTGlua0NvcHkifX0&e=lv8gzY)
 
 ---
 
@@ -214,6 +227,8 @@ Lab5/
 ├── Task4/
 │   └── task4.py
 └── Task5/
+    ├── block.png
+    └── screen.png
 ```
 
 ---
@@ -241,6 +256,7 @@ Recommended order:
 - Ambient light, object distance, and surface reflectivity can affect readings.
 - The repository currently does not include the `tcs34725.py` driver file, so it must already be installed on the ESP32 filesystem.
 - PWM values in Task 4 are tuned as fixed levels rather than computed dynamically.
+- Task 5 is complete and includes MIT App Inventor integration, as shown in the Task 5 demo and screenshots.
 
 ---
 
