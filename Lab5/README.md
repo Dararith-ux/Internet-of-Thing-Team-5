@@ -196,7 +196,13 @@ The demo below shows Task 4 using the detected color to control DC motor speed i
 
 `Task5/` has been completed.
 
-This task extends the color-sensing workflow into a mobile UI experience using MIT App Inventor. The app displays the detected color and provides a simple interactive interface for monitoring the system.
+This task extends the color-sensing workflow into a mobile UI experience using MIT App Inventor. The app connects the ESP32 and provides interactive control through the phone interface.
+
+### What this task does
+
+- Detects the color and displays it in the MIT App Inventor app
+- Accepts RGB input from the app, sends it to the ESP32, and uses it to control the NeoPixel color display
+- Controls the DC motor to move forward, backward, or stop
 
 ### Task 5 Block Diagram
 
