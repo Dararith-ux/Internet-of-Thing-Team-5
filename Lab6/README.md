@@ -289,18 +289,6 @@ Recommended testing order:
 
 ---
 
-## Submission Requirements
-
-The final submission should include:
-
-- [ ] `main.py`
-- [ ] Flowchart
-- [ ] CSV file
-- [ ] Firestore screenshot
-- [ ] Demo video `60-90 sec`
-- [ ] `README.md`
-
----
 
 ## Notes and Limitations
 
@@ -315,7 +303,7 @@ The final submission should include:
 
 ## Academic Integrity Note
 
-This lab should reflect my own wiring, code implementation, testing, and understanding of the RFID attendance workflow. Any external MicroPython drivers, Firestore examples, or SD card references used in the project should be understood, adapted properly, and credited when required.
+This lab should reflect my team wiring, code implementation, testing, and understanding of the RFID attendance workflow. Any external MicroPython drivers, Firestore examples, or SD card references used in the project should be understood, adapted properly, and credited when required.
 
 ---
 
