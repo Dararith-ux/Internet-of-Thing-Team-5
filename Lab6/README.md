@@ -75,6 +75,10 @@ flowchart LR
 - Firestore / Firebase cloud database
 - Wi-Fi connection for cloud logging
 
+### Wiring
+<!-- Insert Blynk screenshots here -->
+![Wiring](wiring.png)
+
 ---
 
 ## Project Title
@@ -100,11 +104,11 @@ For invalid cards, the system only gives feedback. It displays `Unknown Card`, a
 
 ## Task Breakdown
 
-### Task 1 - Read UID from RFID Card
+### 1. Read UID from RFID Card
 
-The first task verifies that the RFID-RC522 module can detect a card and read its unique ID. The UID is the main value used to identify whether the scanned card belongs to a registered student.
+This verifies that the RFID-RC522 module can detect a card and read its unique ID. The UID is the main value used to identify whether the scanned card belongs to a registered student.
 
-### What this task does
+***What this task does***
 
 - Detects when an RFID card is placed near the reader
 - Retrieves the card's unique ID `UID`
@@ -113,18 +117,18 @@ The first task verifies that the RFID-RC522 module can detect a card and read it
 
 ---
 
-### Task 2 - Match UID with Student Database
+### 2. Match UID with Student Database
 
-Task 2 adds the identification logic. The scanned UID is compared with predefined student data stored in the program.
+This adds the identification logic. The scanned UID is compared with predefined student data stored in the program.
 
-### Matching logic
+***Matching logic***
 
 - If the UID is found -> valid student
 - If the UID is not found -> unknown card
 
 Each valid student record should include the student's UID, name, student ID, and major. This allows the system to store complete attendance information instead of only saving the raw card UID.
 
-### What this task does
+***What this task does***
 
 - Stores predefined student information
 - Compares the scanned UID with known UIDs
@@ -133,17 +137,17 @@ Each valid student record should include the student's UID, name, student ID, an
 
 ---
 
-### Task 3 - Generate Current DateTime
+### 3. Generate Current DateTime
 
-Task 3 adds timestamp generation. Every valid attendance record must include the current date and time.
+This adds timestamp generation. Every valid attendance record must include the current date and time.
 
-### Required DateTime format
+***Required DateTime format***
 
 ```text
 YYYY-MM-DD HH:MM:SS
 ```
 
-### Example
+***Example***
 
 ```text
 2026-04-21 09:30:15
@@ -153,18 +157,18 @@ The same timestamp format is used for both the SD card CSV file and the Firestor
 
 ---
 
-### Task 4 - Valid UID Attendance Logging
+### 4. Valid UID Attendance Logging
 
-Task 4 handles the full valid-card workflow. When the scanned UID matches a student in the database, the system treats the scan as a successful attendance entry.
+This handles the full valid-card workflow. When the scanned UID matches a student in the database, the system treats the scan as a successful attendance entry.
 
-### Valid card behavior
+***Valid card behavior***
 
 - Activates the buzzer for `0.3` seconds
 - Generates the current date and time
 - Saves attendance data to the SD card in CSV format
 - Sends the same attendance data to Firestore
 
-### Data saved for each valid scan
+***Data saved for each valid scan***
 
 ```text
 UID, Name, StudentID, Major, DateTime
@@ -174,11 +178,11 @@ This step combines identification, local storage, cloud storage, and user feedba
 
 ---
 
-### Task 5 - Invalid UID Handling
+### 5. Invalid UID Handling
 
-Task 5 defines what happens when the scanned RFID card is not registered in the student database.
+This defines what happens when the scanned RFID card is not registered in the student database.
 
-### Invalid card behavior
+***Invalid card behavior***
 
 - Activates the buzzer for `3` seconds
 - Displays `Unknown Card`
@@ -254,16 +258,31 @@ The short beep confirms a successful attendance scan. The longer beep signals th
 
 ---
 
+### 📷 Firebase Screenshots
+<!-- Insert telegram interaction screenshots here -->
+![Firestore Screesnhot 1](firestore_screenshot1.png)
+![Firestore Screenshot 2](firestore_screenshot2.png)
+
+---
+
+## 🎥 Video Presentation
+
+
+👉 Watch the demo here:  
+[▶️ Link to demo](https://aupp-my.sharepoint.com/:v:/g/personal/2024321thy_aupp_edu_kh/IQA1WwvHkO7-S5ei8pRWcbhuASM11a9GFvClDmBjpYg2PcE?nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJPbmVEcml2ZUZvckJ1c2luZXNzIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXciLCJyZWZlcnJhbFZpZXciOiJNeUZpbGVzTGlua0NvcHkifX0&e=bLAl6W)
+
+---
+
 ## Repository Structure
 
 ```text
 Lab6/
 ├── README.md
 ├── main.py
-├── flowchart.png
+├── wiring.png
 ├── attendance.csv
-├── firestore_screenshot.png
-└── demo_video_link.txt
+├── firestore_screenshot1.png
+└── firestore_screenshot2.png
 ```
 
 ---
