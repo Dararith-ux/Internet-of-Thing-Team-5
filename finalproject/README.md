@@ -24,8 +24,8 @@ The **IoT Smart Pill Counter** solves this by automatically detecting and counti
 | **LCD Screen (16x2 I2C)** | Displays the current status and instructions to the user in plain text |
 | **Pills** | Placed flat on a counting plate within clear view of the ESP32-CAM |
 
-![Components](images/components.png)
-<!-- 🖼️ IMAGE: A flat lay photo of all the hardware components laid out neatly — ESP32-CAM, ESP32, buzzer, LCD screen, and a small pile of pills on a white plate -->
+<!-- ![Components](images/components.png)
+🖼️ IMAGE: A flat lay photo of all the hardware components laid out neatly — ESP32-CAM, ESP32, buzzer, LCD screen, and a small pile of pills on a white plate -->
 
 ---
 
@@ -48,7 +48,6 @@ After counting, the server compares the detected number against the target and g
 Once the user adjusts the pills, they press **Capture** again. The process repeats until the correct count is reached.
 
 ![System Flow](images/flowchart.png)
-<!-- 🖼️ IMAGE: The system flowchart diagram showing the full flow from setting target → placing pills → clicking capture → ML detection → ESP32 feedback → adjust and retry loop -->
 
 ---
 
@@ -57,7 +56,6 @@ Once the user adjusts the pills, they press **Capture** again. The process repea
 The web interface is served directly by the Flask server and can be opened on any device on the same WiFi network. It shows the live camera feed, lets the user set the target pill count, and has a Capture button to trigger detection.
 
 ![Web UI](images/web_ui.png)
-<!-- 🖼️ IMAGE: A screenshot of the web UI in a browser showing the live video feed with pill detection boxes drawn, the target count input field, and the Capture button -->
 
 ---
 
@@ -70,8 +68,8 @@ The web interface is served directly by the Flask server and can be opened on an
 - Power on the ESP32-CAM and connect it to your WiFi network
 - Note down the IP address shown in the Serial Monitor — you will need it for the server config
 
-![ESP32-CAM Setup](images/esp32cam_setup.png)
-<!-- 🖼️ IMAGE: A photo of the ESP32-CAM connected to a USB-to-serial programmer or powered via a breadboard, with the camera pointing downward at the counting plate -->
+<!-- ![ESP32-CAM Setup](images/esp32cam_setup.png)
+🖼️ IMAGE: A photo of the ESP32-CAM connected to a USB-to-serial programmer or powered via a breadboard, with the camera pointing downward at the counting plate -->
 
 ### 2. Flask Server + Web UI — run second
 
@@ -108,8 +106,8 @@ SERVER_URL = "http://YOUR_SERVER_IP:5000/capture_result"
 - The LCD will show `WiFi Connected!` followed by `PillCount AI — Ready!`
 - The ESP32 will now poll the server every second waiting for a capture event
 
-![Thonny Setup](images/thonny_setup.png)
-<!-- 🖼️ IMAGE: A screenshot of Thonny IDE with esp32.py open and the shell showing "WiFi Connected!" and "PillCount AI Ready!" messages -->
+<!-- ![Thonny Setup](images/thonny_setup.png)
+🖼️ IMAGE: A screenshot of Thonny IDE with esp32.py open and the shell showing "WiFi Connected!" and "PillCount AI Ready!" messages -->
 
 ---
 
