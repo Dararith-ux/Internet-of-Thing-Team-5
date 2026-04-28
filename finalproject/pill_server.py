@@ -20,8 +20,7 @@ CONF_THRESHOLD = 0.4
 NMS_THRESHOLD  = 0.45
 INPUT_SIZE     = (640, 640)
 
-ESP32_URL      = "http://10.99.181.60"          # ← your ESP32-CAM IP
-#http://10.99.181.60 , "http://172.20.10.5" 
+ESP32_URL      = "..."          # ← your ESP32-CAM IP
 ESP32_STREAM   = f"{ESP32_URL}:81/stream"
 ESP32_CAPTURE  = f"{ESP32_URL}/capture"
 
