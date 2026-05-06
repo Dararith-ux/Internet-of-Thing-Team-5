@@ -59,6 +59,14 @@ The web interface is served directly by the Flask server and can be opened on an
 
 ---
 
+## 🎬 Watch the DEMO
+
+Watch the project demo here:
+
+https://drive.google.com/file/d/1m4zp4GGg7boknw1B0QNIqsjQl4WvToJ7/view?usp=sharing
+
+---
+
 ## 🚀 How to Run
 
 ### 1. ESP32-CAM — run first (Arduino IDE)
